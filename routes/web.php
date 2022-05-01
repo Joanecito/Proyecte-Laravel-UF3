@@ -7,6 +7,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,7 +61,13 @@ Route::get('posts/create', 'PostController@create')->name('posts.create');
  Route::post('posts/store', 'PostController@store')->name('posts.store');
 // BORRAR UN POST
 Route::get('posts/{id}/destroy', 'PostController@destroy')->name('posts.destroy');
-
+//-------- RUTAS DEL LOS COMENTARIOS-----------//
+// VISTA PARA CREAR UN COMENTARIO
+Route::get('comments/(id)/create', 'CommentController@create')->name('comments.create');
+// CREAR UN COMMENTARIO
+Route::post('comments/{id}/store', 'CommentController@store')->name('comments.store');
+//-------- GESTION DE BUSQUEDA-----------//
+Route::get('search','SearchController@busqueda')->name('buscar');
 Route::middleware(['auth','role:admin'])->prefix('admin')->group(function(){
     Route::get('/',function(){
         return "admin";

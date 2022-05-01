@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Post;
 use App\Comment;
+use App\User;
+
 
 class PostController extends Controller
 {
@@ -62,13 +64,12 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $posts = Post::find($id);
+        $post = Post::find($id);
 
+        $users = User::all();        
+        $comments = Comment::where('post_id', $post->id)->get();
+        return view('posts.show', ['post' => $post, 'comments' => $comments, 'users' => $users]);
         
-
-        $comment = Comment::where('id', $posts->id)->get();
-
-        return view('posts.show', ['post' => $posts, 'comments' => $comment]);
     }
 
     /**

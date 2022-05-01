@@ -3,18 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Comment;
-use App\User;
 use App\Post;
+use App\Comment;
 
-class CommentController extends Controller
+class SearchController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+    public function busqueda(Request $request)
+    {
+        return view('posts.create');
+        //$input = $request->all();
+        //$busqueda = $request->search;
+        //$posts = Post::all();
+        //$comments = Comment::all();
+        //if ($busqueda) {
+            //$posts = Post::where("title", "LIKE", "%{$request->get('search)}%")
+            //-paginate(25);
+       // }
+        
+    }
     public function index()
     {
         //
@@ -22,13 +33,12 @@ class CommentController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     * @param  int  $id
+     *
      * @return \Illuminate\Http\Response
      */
-    public function create($id)
+    public function create()
     {
-        $post = Post::find($id);
-        return view('comments.create',['post' => $post->id]);
+        //
     }
 
     /**
@@ -37,17 +47,9 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $id)
+    public function store(Request $request)
     {
-        $comment = new Comment();
-        
-        $comment->comment = $request->get('comment');
-        $comment->user_id = Auth::user()->id;
-        $comment->post_id = $id;
-
-        $comment->save();
-
-        return redirect('posts');
+        //
     }
 
     /**

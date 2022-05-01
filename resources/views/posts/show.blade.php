@@ -33,11 +33,27 @@
                         <h4>Comments</h4>
                     </div>
                     <div class="card-body">
-                        @foreach ($comments as $comment)
-                            {{$comment->id}}
+                    @foreach ($comments as $comment)
+                    @foreach ($users as $user)
+                    @if ($comment->user_id == $user->id)
+                            <p>User {{ $user->username }} says: {{ $comment->comment }} </p>
+                            @endif
                         @endforeach
-                    </div>
-                    <?php var_dump($comments) ?>
+                        @endforeach
+                        <form method="POST" action="{{ route('comments.store', $post->id) }}">
+                            @csrf
+
+                            <label for="comment" class="form-label">Comment</label>
+                            <div class="mb-3">
+                                <textarea name="comment" id="comment" cols="30" rows="10"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <a href="{{ route('posts') }}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    
                 </div>
             </div>
         </div>
