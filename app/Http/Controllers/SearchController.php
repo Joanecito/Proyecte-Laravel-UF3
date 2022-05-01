@@ -15,7 +15,7 @@ class SearchController extends Controller
      */
     public function busqueda(Request $request)
     {
-        return view('posts.create');
+        return view('posts.show');
         //$input = $request->all();
         //$busqueda = $request->search;
         //$posts = Post::all();

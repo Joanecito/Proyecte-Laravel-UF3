@@ -12,7 +12,6 @@
                     <div class="card-body">
                         {{ $post->content }}
                     </div>
-
                     @if (Auth::user()->id == $post->user_id or Auth::user()->hasRole('admin'))
                         <div class="card-body">
                             <form action="{{ route('posts.destroy', $post->id) }}" method="DELETE">
@@ -53,7 +52,6 @@
                                 <a href="{{ route('posts') }}" class="btn btn-secondary">Cancel</a>
                             </div>
                         </form>
-                    
                 </div>
             </div>
         </div>

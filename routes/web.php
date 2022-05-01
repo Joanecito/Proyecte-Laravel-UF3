@@ -66,6 +66,8 @@ Route::get('posts/{id}/destroy', 'PostController@destroy')->name('posts.destroy'
 Route::get('comments/(id)/create', 'CommentController@create')->name('comments.create');
 // CREAR UN COMMENTARIO
 Route::post('comments/{id}/store', 'CommentController@store')->name('comments.store');
+// BORRAR UN COMMENTARIO
+Route::get('comments/{id}/destroy', 'CommentController@destroy')->name('comments.destroy');
 //-------- GESTION DE BUSQUEDA-----------//
 Route::get('search','SearchController@busqueda')->name('buscar');
 Route::middleware(['auth','role:admin'])->prefix('admin')->group(function(){

@@ -1,0 +1,9 @@
+@if (Auth::user()->id == $comment->user_id or Auth::user()->hasRole('admin'))
+                        <div class="card-body">
+                            <form action="{{ route('comments.destroy', $comment->id) }}" method="DELETE">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger" type="submit">Delete Comment</button>
+                            </form>
+                        </div>
+                    @endif
