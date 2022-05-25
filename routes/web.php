@@ -25,7 +25,8 @@ use App\Http\Controllers\SearchController;
     return view('welcome');
 });*/
 
-
+Route::get('posts/{tags}/getCleanedTags', 'PostController@getCleanedTags');
+Route::resource('posts', 'PostController');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -47,6 +48,7 @@ Route::post('user/store', 'UserController@store')->name('user.store');
 
 
 //-------- RUTAS DEL POST-----------//
+
 // VER LOS POSTS
 Route::get('posts', 'PostController@index')->name('posts');
 // VER UN POST CON SUS COMENTARIOS
@@ -61,25 +63,34 @@ Route::get('posts/create', 'PostController@create')->name('posts.create');
  Route::post('posts/store', 'PostController@store')->name('posts.store');
 // BORRAR UN POST
 Route::get('posts/{id}/destroy', 'PostController@destroy')->name('posts.destroy');
+
+
 //-------- RUTAS DEL LOS COMENTARIOS-----------//
+
 // VISTA PARA CREAR UN COMENTARIO
 Route::get('comments/(id)/create', 'CommentController@create')->name('comments.create');
 // CREAR UN COMMENTARIO
 Route::post('comments/{id}/store', 'CommentController@store')->name('comments.store');
 // BORRAR UN COMMENTARIO
 Route::get('comments/{id}/destroy', 'CommentController@destroy')->name('comments.destroy');
+
+
+//-------- RUTAS DEL LOS TAGS-----------//
+
+// VER LOS POSTS CON SUS TAGS
+Route::get('tags/{id}/show', 'TagController@show')->name('tags.show');
 //-------- GESTION DE BUSQUEDA-----------//
-Route::get('search','SearchController@busqueda')->name('buscar');
-Route::middleware(['auth','role:admin'])->prefix('admin')->group(function(){
-    Route::get('/',function(){
-        return "admin";
-    })->name('admin.index');
-});
+Route::get('tags','TagController@index')->name('tags');
+
+
+
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('unauthorized',function(){
+Route::get('unauthorized', function () {
     return view('unauthorized');
 });
+
+

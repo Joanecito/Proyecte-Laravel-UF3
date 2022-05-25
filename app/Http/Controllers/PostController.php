@@ -6,11 +6,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Post;
 use App\Comment;
-use App\User;
-
+use App\Tag;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
+    public function __construct()
+    {
+
+
+        //$this->authorizeResource(Post::class, 'post');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -18,9 +25,17 @@ class PostController extends Controller
      */
     public function index()
     {
+        //
         $posts = Post::all();
 
-        return view('posts.index', ['posts' => $posts]);
+        $post_tag = [];
+        $i = 0;
+        foreach ($posts as $post) {
+            $post_tag[$i] = $post->tags()->get();
+            $i++;
+        }
+
+        return view('posts.index', ['posts' => $posts, 'post_tag' => $post_tag]);
     }
 
     /**
@@ -30,7 +45,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        
+        //
+        $this->authorize('create', Post::class);
 
         return view('posts.create');
     }
@@ -43,16 +59,33 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        //
         $user = Auth::user();
 
-        $post = new Post();
+        $validated = $request->validate([
+            'title' => 'required|max:191',
+            'content' => 'required|max:191',
+            'tags' => ''
+        ]);
 
-        $post->title = $request->get('title');
-        $post->content = $request->get('content');
-        $post->user_id = $user->id;
+        $post = Post::create([
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'user_id' => $user->id,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        //treiem els espais en blanc dels tags i els guardem en un array nou
+        $tags = explode(',', $validated['tags']);
+        $cleaned_tags = $this->getCleanedTags($tags);
+
+        $tag_controller = new TagController();
+        $tag_controller->store($cleaned_tags, $post);
 
         $post->save();
 
+        //redireccio al metode index perque ens torni a mostrar tots els nostres posts
         return redirect('posts');
     }
 
@@ -64,12 +97,16 @@ class PostController extends Controller
      */
     public function show($id)
     {
+        //
         $post = Post::find($id);
 
-        $users = User::all();        
+        //$this->authorize('view', $post);
+
         $comments = Comment::where('post_id', $post->id)->get();
-        return view('posts.show', ['post' => $post, 'comments' => $comments, 'users' => $users]);
-        
+
+        $tags = $post->tags()->get();
+
+        return view('posts.show', ['post' => $post, 'comments' => $comments, 'tags' => $tags]);
     }
 
     /**
@@ -78,13 +115,21 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($idpost)
+    public function edit($id)
     {
+        //
+        $post = Post::find($id);
 
-        $post = Post::find($idpost);
+        //$this->authorize('update', $post);
 
+        $tags = $post->tags()->get();
 
-        return view('posts.edit', ['post' => $post]);
+        $str_tags = "";
+        foreach ($tags as $tag) {
+            $str_tags .= $tag->text . ",";
+        }
+
+        return view('posts.edit', ['post' => $post, 'tags' => $str_tags]);
     }
 
     /**
@@ -96,13 +141,26 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //
         $post = Post::find($id);
+
+        //$this->authorize('update', $post);
+
+        //eliminem les relacions dels tags antics
+        $post->tags()->detach();
+
+        //obtenim i netejem els tags
+        $tags = $this->getCleanedTags(explode(",", $request->get('tags')));
+
+        //tornem a crear les relacions i creem tags si n'hi ha de nous
+        $tag_controller = new TagController();
+        $tag_controller->store($tags, $post);
 
         $post->title = $request->get('title');
         $post->content = $request->get('content');
         $post->updated_at = now();
 
-        $post->save();
+        $post->update();
 
         return redirect('posts');
     }
@@ -115,11 +173,32 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
+        //
         $post = Post::find($id);
 
+        $this->authorize('delete', $post);
+
+        $post->tags()->detach();
+
+        Comment::where('post_id', $id)->delete();
 
         $post->delete();
 
         return redirect('posts');
+    }
+
+    //funcio que serveix per eliminar els tags que poden ser espais en blanc
+    public function getCleanedTags($tags)
+    {
+        $cleaned_tags = [];
+        $i = 0;
+        foreach ($tags as $tag) {
+            $t = trim($tag);
+            if ($t != "") {
+                $cleaned_tags[$i] = $t;
+                $i++;
+            }
+        }
+        return $cleaned_tags;
     }
 }

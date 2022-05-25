@@ -33,15 +33,13 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
-                    </ul> <article class="buscador">
-                        <form action="{{route('buscar')}}">
-                            <label class="h2" for="search"></label>
-                            <br>
-                            <input type="text" name="search">
-                            <input type="submit" value="Buscar">
-                        </form>
-                    </article>
+                    </ul> 
+                    <form class="form-inline my-2 my-lg-0" method="GET" action="{{ route('tags')}}">
+                        @method('GET')
+                        @csrf
+                        <input type="search" name="search" class="form-control mr-sm-2" type="search" placeholder="Search tags or posts" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">

@@ -22,6 +22,11 @@
                             <div class="mb-3">
                                 <textarea name="content" id="content" cols="30" rows="10">{{ $post->content }}</textarea>
                             </div>
+                            <div class="mb-3">
+                                <label for="tags" class="form-label">Tags</label>
+                                <input id="tags" name="tags" type="text" class="form-control"
+                                    placeholder="Split tags by commas" value="{{ $tags }}">
+                            </div>
 
                             <div class="mb-3">
                                 <button type="submit" class="btn btn-primary">Save</button>
